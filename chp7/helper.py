@@ -143,3 +143,53 @@ def z_score_lookup(samples, confidence, xBar, s, display=False):
     except:
         print ("Unexpected error:", sys.exc_info()[0])
         raise
+        
+def t_confidence_Interval_Difference_Of_Means(xSamples, ySamples, confidence):
+    """
+    xSamples = samples for r.v X
+    ySamples = samples for r.v Y
+    
+    Assuming 
+        1. m and n < 30
+        2. Variance is unknown
+    
+    returns: Confidience Interval for difference between two means using T distribution
+    """
+    try:
+        if len(xSamples) >= 30 or len(ySamples) >= 30:
+            raise sampleSizeError("Should use normal distribution instead. m or n > 30.")
+        
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int or type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+    
+        # Find mean and variance for both sample distributions
+        n = len(xSamples) 
+        xBar = sample_mean(xSamples)
+        xSampStd = sample_variance(xSamples) ** .5
+        
+        m = len(ySamples)
+        yBar = sample_mean(ySamples)
+        ySampStd = sample_variance(ySamples) ** .5
+        
+        # Find t at alpha/2 and the new distribution's sample size - 2
+        # Calculate the sample pooling standard deviation
+        tAlpha = (1 + confidence) / 2.0
+        t = scipy.stats.t.ppf(tAlpha, (m + n - 2)) 
+        spsd = ((((n - 1)* (xSampStd**2)) + ((m - 1) * (ySampStd**2)))/(m + n - 2)) ** .5 
+        
+        # Find the lower and upper bound 
+        # (X-Y) (+/-) t((spsd * (((1/m)+(1/n)) **.5))
+        lowerBound = (xBar - yBar) - t * (spsd * (((1/m)+(1/n)) **.5))
+        upperBound = (xBar - yBar) + t * (spsd * (((1/m)+(1/n)) **.5))
+        
+        return lowerBound, upperBound
+    
+    except sampleSizeError as inst:
+        print(inst.args[0])
+    
+    except ValueError as inst:
+        print(inst.args[0])
