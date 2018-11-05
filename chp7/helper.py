@@ -4,6 +4,7 @@ import pandas as pd
 import scipy
 import matplotlib.pyplot as plt
 import seaborn as sns
+import math
 
 class tablelookup_Error(Exception):
     pass
@@ -313,7 +314,83 @@ def prop_one_side_conf_interval(p, n, confidence, side=1):
     
     except ValueError as inst:
         print (inst.args[0])
-        print(type(confidence))
+        print("Confidence is type:", type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
+
+def maximum_error_estimate(variance, epsilon, confidence, display=True):
+    """
+    variance: variance of the distribution
+    epsilon: arbitrarily chosen small number
+    confidence: degree of confidence interval contains mean of total distirbution 
+    
+    Assuming variance is known
+    Returns: Number of samples need for Maximum error of estimate with specified degree of confidence.
+    """
+    
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+            
+        z = scipy.stats.norm.ppf((1 + confidence) / 2.0)
+        n = (z **2 * variance) / epsilon **2
+
+        if display == True:
+            print("Finding number of samples needed given")
+            print("==" * 16)
+            print(f"Variance: {variance:.4f}, Epsilon{epsilon:.4f}, with {confidence}% of confidence.")
+            print(f"N = {n} ≈ {math.ceil(n)} samples needed")
+        return math.ceil(n)
+    except ValueError as inst:
+        print (inst.args[0])
+        print("Confidence is type:", type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
+        
+def maximum_error_conf_interval(xBar, variance, n, confidence, display=True):
+    """
+    xBar: sample mean 
+    variance: variance of the distribution
+    confidence: degree of confidence interval contains mean of total distirbution 
+    
+    Assuming sample mean and variance are known
+    Returns: Maxium error confidence interval
+    """
+    
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}\n")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value\n")
+        
+        std = variance ** .5
+        z = scipy.stats.norm.ppf((1 + confidence) / 2.0)
+        epsilon =  (z * std )/ n **.5 
+        
+        lowerBound = round((xBar - epsilon), 3)
+        upperBound = round((xBar + epsilon), 3)
+        
+        if display == True:
+            print("Sample Distribution details")
+            print("==" * 16)
+            print(f"Variance: {variance:.4f}, Epsilon: {epsilon:.4f}, N: {n} \n")
+            
+            print(f"Total Distribution Expected Value with {confidence * 100}% confidence")
+            print("==" * 16)
+            print(f"[{lowerBound}, {upperBound}]")
+        
+        return lowerBound, upperBound
+    except ValueError as inst:
+        print (inst.args[0])
+        print("Confidence is type:", type(confidence))
     except:
         print ("Unexpected error:", sys.exc_info()[0])
         raise
