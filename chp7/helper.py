@@ -343,7 +343,7 @@ def maximum_error_estimate(variance, epsilon, confidence, display=True):
         if display == True:
             print("Finding number of samples needed given")
             print("==" * 16)
-            print(f"Variance: {variance:.4f}, Epsilon{epsilon:.4f}, with {confidence}% of confidence.")
+            print(f"Variance: {variance:.4f}, Epsilon: {epsilon:.4f}, with {confidence}% of confidence.")
             print(f"N = {n} ≈ {math.ceil(n)} samples needed")
         return math.ceil(n)
     except ValueError as inst:
