@@ -284,4 +284,36 @@ def biased_conf_interval(y, n, confidence):
     except:
         print ("Unexpected error:", sys.exc_info()[0])
         raise
+
+def prop_one_side_conf_interval(p, n, confidence, side=1):
+    """
+    p: point estimate of probability of success
+    n: number of total trails
+    confidence: degree of confidence interval contains mean of total distirbution  
+    side: determines if the upper/lower bound is returned (e.g side < 0 = lower | side > 0 = upper)
     
+    Return: One-side porpotional confidence interval 
+    """
+    
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+
+        z = scipy.stats.norm.ppf(confidence)
+        
+        if side < 0:
+            print("One-sided Lower boundary:")
+            return p - z * ((p * (1-p)) / n) ** .5
+        print("One-sided Upper boundary:")
+        return p + z * ((p * (1-p)) / n) ** .5
+    
+    except ValueError as inst:
+        print (inst.args[0])
+        print(type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
