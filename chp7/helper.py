@@ -193,3 +193,95 @@ def t_confidence_Interval_Difference_Of_Means(xSamples, ySamples, confidence):
     
     except ValueError as inst:
         print(inst.args[0])
+
+def prop_conf_interval(p, n, confidence):
+    """
+    p: point estimate of probability of success
+    n: number of total trails
+    confidence: degree of confidence interval contains mean of total distirbution  
+    
+    Return: Confidence Intervals for a binomail r.v with unkown p 
+    """
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+        
+        z = scipy.stats.norm.ppf((1 + confidence) / 2.0)
+        lowerBound = p - z * (((p * (1 - p)) / n) **.5)
+        upperBound = p + z * (((p * (1 - p)) / n) **.5)
+
+        return lowerBound, upperBound 
+    except ValueError as inst:
+        print (inst.args[0])
+        print(type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
+        
+def histogram_prop_conf_interval(p, n, confidence):
+    """
+    p: point estimate of probability of success
+    n: number of total trails
+    confidence: degree of confidence interval contains mean of total distirbution  
+    
+    Return: Confidence Intervals for a binomail r.v with unkown p 
+    """
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+
+        confidence = (1 + confidence) / 2.0
+        z = scipy.stats.norm.ppf(confidence)
+
+        lowerBound =  (p + (z **2)/(2 * n) - z * (((p * (1-p))/n + (z **2)/(4*n)**2) **.5)) / (1 + (z **2)/n)
+        upperBound = (p + (z **2)/(2 * n) + z * (((p * (1-p))/n + (z **2)/(4*n)**2) **.5)) / (1 + (z **2)/n)
+    
+        return lowerBound, upperBound
+    
+    except ValueError as inst:
+        print (inst.args[0])
+        print(type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
+        
+def biased_conf_interval(y, n, confidence):
+    """
+    y: frequency of event occuring
+    n: number of total trails
+    confidence: degree of confidence interval contains mean of total distirbution  
+    
+    Return: Confidence Intervals for a binomail r.v with unkown p 
+    """
+    try:
+        if confidence > 1:
+            confidence = confidence / 100.0
+            print(f"Converting confidence interval to {confidence}")
+
+        elif type(confidence) != int and type(confidence) != float:
+            raise ValueError("Confidence Interval must be a numeric value")
+        
+        pBiased = (y + 2) / (n + 4)
+
+        z = scipy.stats.norm.ppf((1 + confidence) / 2.0)
+
+        lowerBound = pBiased - z * (((pBiased * (1 - pBiased) / (n + 4))) ** .5)
+        upperBound = pBiased + z * (((pBiased * (1 - pBiased) / (n + 4))) ** .5)
+
+        return lowerBound, upperBound
+    
+    except ValueError as inst:
+        print (inst.args[0])
+        print(type(confidence))
+    except:
+        print ("Unexpected error:", sys.exc_info()[0])
+        raise
+    
