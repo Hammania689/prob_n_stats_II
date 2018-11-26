@@ -6,6 +6,7 @@ import scipy
 import matplotlib.pyplot as plt
 import seaborn as sns
 import math
+import re
 
 class tablelookup_Error(Exception):
     pass
@@ -21,7 +22,8 @@ def load_sample_data(chp,sect,prob, display=False):
     file_path =Path(Path.cwd().parents[0],'prob_data',file_name)
     if Path.exists(file_path):
         print(f"Loaded {file_name} sucessfully.")
-        content = pd.read_csv(file_path,delimiter=' ',header=None).values.flatten()
+        content = pd.read_csv(file_path, sep=' |\t', engine='python',header=None).values.flatten()
+        
         if(display):
             print(content)
         return content
