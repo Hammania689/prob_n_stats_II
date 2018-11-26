@@ -1,4 +1,5 @@
 from pathlib import Path
+from decimal import *
 import numpy as np
 import pandas as pd
 import scipy
